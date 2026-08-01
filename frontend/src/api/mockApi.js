@@ -128,7 +128,12 @@ const api = {
   async getTasks(filters = {}) {
     await delay()
     const db = loadDb()
-    let tasks = [...db.tasks]
+    const viewer = getSessionUser(db)
+    // Regular users only see their own tasks; Admins see everything.
+    let tasks =
+      viewer?.role === 'Admin'
+        ? [...db.tasks]
+        : db.tasks.filter((t) => t.assignedUserId === viewer?.id)
 
     const { status, priority, categoryId, assignedUserId, search, dueDate } = filters
     if (status) tasks = tasks.filter((t) => t.status === status)
