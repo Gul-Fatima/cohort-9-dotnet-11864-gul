@@ -13,10 +13,10 @@
   --text-2: #4b5368;
   --text-3: #8a91a8;
 
-  --primary: #4f46e5;
-  --primary-strong: #4338ca;
-  --primary-soft: #eef0ff;
-  --violet: #7c3aed;
+  --primary: #059669;
+  --primary-strong: #047857;
+  --primary-soft: #ecfdf5;
+  --violet: #10b981;
 
   --green: #059669;
   --green-soft: #e7f8f1;
@@ -36,8 +36,8 @@
   --shadow-lg: 0 12px 40px -12px rgba(23, 28, 46, 0.28);
 
   --sidebar-w: 248px;
-  --sidebar-bg: #161a2e;
-  --sidebar-bg-grad: linear-gradient(180deg, #1b2040 0%, #141831 100%);
+  --sidebar-bg: #0b2b1e;
+  --sidebar-bg-grad: linear-gradient(180deg, #0f3526 0%, #072019 100%);
   --font: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 }
 
@@ -91,7 +91,7 @@ a {
   width: var(--sidebar-w);
   flex-shrink: 0;
   background: var(--sidebar-bg-grad);
-  color: #e6e8f7;
+  color: #cfe5d8;
   display: flex;
   flex-direction: column;
   padding: 22px 16px;
@@ -114,9 +114,9 @@ a {
   width: 38px;
   height: 38px;
   border-radius: 11px;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  background: linear-gradient(135deg, #34d399, #059669);
   color: #fff;
-  box-shadow: 0 6px 16px -6px rgba(99, 102, 241, 0.7);
+  box-shadow: 0 6px 16px -6px rgba(16, 185, 129, 0.7);
 }
 
 .brand-name {
@@ -139,7 +139,7 @@ a {
   gap: 12px;
   padding: 11px 12px;
   border-radius: var(--radius-sm);
-  color: #aab0cf;
+  color: #b8dcc9;
   font-weight: 500;
   font-size: 14.5px;
   transition: background 0.18s ease, color 0.18s ease, transform 0.12s ease;
@@ -151,9 +151,9 @@ a {
 }
 
 .nav-link.active {
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.9), rgba(139, 92, 246, 0.85));
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.95), rgba(5, 150, 105, 0.9));
   color: #fff;
-  box-shadow: 0 6px 18px -8px rgba(99, 102, 241, 0.9);
+  box-shadow: 0 6px 18px -8px rgba(16, 185, 129, 0.9);
 }
 
 .nav-link:active {
@@ -181,7 +181,7 @@ a {
   height: 36px;
   flex-shrink: 0;
   border-radius: 50%;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  background: linear-gradient(135deg, #34d399, #059669);
   color: #fff;
   font-weight: 700;
   font-size: 13px;
@@ -212,12 +212,12 @@ a {
 
 .user-chip-role {
   font-size: 11.5px;
-  color: #8a90b8;
+  color: #7fa893;
   text-transform: capitalize;
 }
 
 .logout-btn {
-  color: #aab0cf;
+  color: #bcddcc;
   background: transparent;
   border: none;
   padding: 6px;
@@ -466,7 +466,7 @@ a {
 .badge-amber { background: var(--amber-soft); color: var(--amber); }
 .badge-red { background: var(--red-soft); color: var(--red); }
 .badge-slate { background: var(--slate-soft); color: var(--slate); }
-.badge-violet { background: var(--primary-soft); color: var(--violet); }
+.badge-violet { background: var(--primary-soft); color: var(--primary-strong); }
 
 /* --- Buttons ------------------------------------------------------------ */
 
@@ -497,12 +497,12 @@ a {
 .btn-primary {
   background: var(--primary);
   color: #fff;
-  box-shadow: 0 6px 16px -8px rgba(79, 70, 229, 0.9);
+  box-shadow: 0 6px 16px -8px rgba(5, 150, 105, 0.9);
 }
 
 .btn-primary:hover:not(:disabled) {
   background: var(--primary-strong);
-  box-shadow: 0 10px 22px -8px rgba(79, 70, 229, 0.9);
+  box-shadow: 0 10px 22px -8px rgba(5, 150, 105, 0.9);
 }
 
 .btn-outline {
@@ -617,7 +617,7 @@ a {
 .field select:focus,
 .field textarea:focus {
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.14);
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.16);
 }
 
 .input-with-icon {
@@ -696,7 +696,7 @@ a {
 
 .filter-search input:focus {
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.14);
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.16);
 }
 
 .filter-search .icon-btn {
@@ -715,7 +715,7 @@ a {
 
 .filter-select:focus {
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.14);
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.16);
 }
 
 /* --- Auth pages --------------------------------------------------------- */
@@ -728,8 +728,8 @@ a {
 .auth-brand-panel {
   flex: 1 1 46%;
   background:
-    radial-gradient(900px 500px at -10% -10%, rgba(99, 102, 241, 0.35), transparent 60%),
-    radial-gradient(700px 500px at 110% 110%, rgba(139, 92, 246, 0.3), transparent 60%),
+    radial-gradient(900px 500px at -10% -10%, rgba(16, 185, 129, 0.35), transparent 60%),
+    radial-gradient(700px 500px at 110% 110%, rgba(5, 150, 105, 0.3), transparent 60%),
     var(--sidebar-bg-grad);
   color: #fff;
   padding: 46px 56px;
@@ -755,7 +755,7 @@ a {
 }
 
 .auth-brand-copy p {
-  color: #b6bce0;
+  color: #a9cdb8;
   font-size: 16px;
   line-height: 1.6;
 }
@@ -771,7 +771,7 @@ a {
 .auth-feature-list li {
   position: relative;
   padding-left: 26px;
-  color: #cfd4ef;
+  color: #b9d4c4;
   font-size: 14.5px;
 }
 
@@ -785,7 +785,7 @@ a {
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: rgba(99, 102, 241, 0.45);
+  background: rgba(16, 185, 129, 0.5);
   color: #fff;
   font-size: 11px;
   font-weight: 700;
@@ -836,7 +836,7 @@ a {
   margin-top: 26px;
   padding: 14px 16px;
   background: var(--primary-soft);
-  border: 1px solid rgba(79, 70, 229, 0.18);
+  border: 1px solid rgba(5, 150, 105, 0.18);
   border-radius: var(--radius-sm);
   font-size: 13px;
   color: var(--text-2);
