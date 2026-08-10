@@ -1,0 +1,19 @@
+# --- .NET build artifacts ---
+bin/
+obj/
+*.user
+*.suo
+.vs/
+*.userprefs
+
+# --- Rider / VS Code ---
+.idea/
+.vscode/
+
+# --- Test results ---
+TestResults/
+*.trx
+
+# --- OS ---
+Thumbs.db
+.DS_Store
