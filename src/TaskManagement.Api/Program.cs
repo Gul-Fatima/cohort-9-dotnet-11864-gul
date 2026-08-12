@@ -1,15 +1,47 @@
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using TaskManagement.Api.Filters;
 using TaskManagement.Infrastructure.Data;
+using TaskManagement.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // --- Services -------------------------------------------------------------
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+    options.Filters.Add<ApiExceptionFilter>()); // ApiException -> { title, message } JSON
 
-// Entity Framework Core against SQL Server (LocalDB/Express via connection string)
+// Entity Framework Core against SQL Server (Express via connection string)
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// JWT bearer authentication: every [Authorize] endpoint will require a valid token.
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        // Keep claim types exactly as we wrote them in the token ("sub", "role", ...)
+        // instead of letting the handler rename "sub" to a long URI. This keeps
+        // User.FindFirstValue("sub") and [Authorize(Roles=...)] working predictably.
+        options.MapInboundClaims = false;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,               // token must come from our issuer
+            ValidateAudience = true,             // token must be meant for our client
+            ValidateLifetime = true,             // reject expired tokens
+            ValidateIssuerSigningKey = true,     // reject tokens not signed with our key
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)),
+            ClockSkew = TimeSpan.FromMinutes(1)  // small grace period for clock drift
+        };
+    });
+builder.Services.AddAuthorization();
+
+// Application services
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -21,7 +53,27 @@ builder.Services.AddSwaggerGen(options =>
         Description = "Web API for the Task Management Tool (cohort 9 assignment)."
     });
 
-    // JWT bearer auth is added in the auth phase (feature/auth-api).
+    // Adds the "Authorize" button to Swagger UI so you can paste a JWT
+    // and test protected endpoints right from the browser.
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Paste your JWT (no 'Bearer ' prefix needed)."
+    });
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+            },
+            Array.Empty<string>()
+        }
+    });
 });
 
 // CORS: allow the Vite dev server (http://localhost:5173)
@@ -44,6 +96,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("Frontend");
 
+// Authentication (WHO are you? -> validate the JWT) must run
+// before Authorization (WHAT are you allowed to do?).
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
