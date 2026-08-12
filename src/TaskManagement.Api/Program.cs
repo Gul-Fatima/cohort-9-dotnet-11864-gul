@@ -1,9 +1,15 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using TaskManagement.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // --- Services -------------------------------------------------------------
 builder.Services.AddControllers();
+
+// Entity Framework Core against SQL Server (LocalDB/Express via connection string)
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -41,6 +47,14 @@ app.UseCors("Frontend");
 app.UseAuthorization();
 
 app.MapControllers();
+
+// --- Startup: apply pending migrations + seed default data (dev convenience) ---
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.Migrate();
+    await DbInitializer.SeedAsync(db);
+}
 
 app.Run();
 
