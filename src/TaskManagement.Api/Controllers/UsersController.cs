@@ -12,13 +12,19 @@ namespace TaskManagement.Api.Controllers;
 [ApiController]
 [Authorize]
 [Route("api/users")]
+// Both actions live on "users" and share the auth/user services — splitting
+// them into two controllers would add boilerplate without real benefit (S6960).
+#pragma warning disable S6960 // Controllers should not have too many responsibilities
 public class UsersController : ControllerBase
+#pragma warning restore S6960
 {
     private readonly IAuthService _authService;
+    private readonly IUserService _userService;
 
-    public UsersController(IAuthService authService)
+    public UsersController(IAuthService authService, IUserService userService)
     {
         _authService = authService;
+        _userService = userService;
     }
 
     /// <summary>
@@ -41,4 +47,13 @@ public class UsersController : ControllerBase
             ? NotFound(new { title = "Not found", message = "User not found." })
             : Ok(user);
     }
+
+    /// <summary>
+    /// GET /api/users — the user directory for the "Assigned To" dropdown.
+    /// Admins only, because only admins can assign tasks to others.
+    /// </summary>
+    [HttpGet]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> GetAll()
+        => Ok(await _userService.GetUsersAsync());
 }

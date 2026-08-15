@@ -101,7 +101,7 @@ export default function LoginPage() {
 
           <div className="auth-demo">
             <strong>Demo accounts</strong>
-            <p>Admin — admin@example.com / Admin@123</p>
+            <p>Admin — admin@taskmgmt.com / Admin@123</p>
             <p>User — user@example.com / User@123</p>
           </div>
         </div>

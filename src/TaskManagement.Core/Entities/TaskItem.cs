@@ -19,7 +19,8 @@ public class TaskItem
 
     public DateTime? DueDate { get; set; }
 
-    public int CategoryId { get; set; }
+    // Nullable so tasks can be "Uncategorized" (the UI offers that option).
+    public int? CategoryId { get; set; }
 
     public Category? Category { get; set; }
 

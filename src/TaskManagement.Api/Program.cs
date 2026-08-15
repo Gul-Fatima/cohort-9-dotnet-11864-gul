@@ -42,6 +42,9 @@ builder.Services.AddAuthorization();
 
 // Application services
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ITaskService, TaskService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -107,11 +110,14 @@ app.MapControllers();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    db.Database.Migrate();
+    await db.Database.MigrateAsync();
     await DbInitializer.SeedAsync(db);
 }
 
-app.Run();
+await app.RunAsync();
 
-// Exposed for integration tests
+// The WebApplication factory pattern requires this partial class so
+// integration tests can reference the Program entry point (S1118 is a false positive here).
+#pragma warning disable S1118 // Utility classes should not have public constructors
 public partial class Program { }
+#pragma warning restore S1118

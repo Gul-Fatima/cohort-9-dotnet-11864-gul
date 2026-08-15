@@ -1,0 +1,12 @@
+<Project>
+
+  <!--
+    Applied to every .NET project in the repo (src + tests).
+    Runs the SonarC# analyzer during build so the same rules SonarQube
+    checks in CI fire locally in Visual Studio / Rider / dotnet build.
+  -->
+  <ItemGroup>
+    <PackageReference Include="SonarAnalyzer.CSharp" Version="10.7.0.110445" PrivateAssets="all" />
+  </ItemGroup>
+
+</Project>
