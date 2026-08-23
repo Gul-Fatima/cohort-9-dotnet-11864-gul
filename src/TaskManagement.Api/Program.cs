@@ -3,11 +3,26 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using TaskManagement.Api.Filters;
 using TaskManagement.Infrastructure.Data;
 using TaskManagement.Services;
 
+// --- Serilog ----------------------------------------------------------------
+// Replaces the default console logger with structured logging: colourised
+// console output for development, plus a rolling daily log file under Logs/.
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information()
+    .MinimumLevel.Override("Microsoft.AspNetCore", Serilog.Events.LogEventLevel.Warning)
+    .Enrich.FromLogContext()
+    .WriteTo.Console(outputTemplate:
+        "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}")
+    .WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Day,
+        outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}")
+    .CreateLogger();
+
 var builder = WebApplication.CreateBuilder(args);
+builder.Host.UseSerilog(); // wire Serilog into the ASP.NET Core host
 
 // --- Services -------------------------------------------------------------
 builder.Services.AddControllers(options =>
@@ -96,6 +111,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseSerilogRequestLogging(options =>
+{
+    // Adds RequestId, StatusCode, and elapsed to every request log line.
+    options.MessageTemplate =
+        "HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000}ms";
+});
 
 app.UseCors("Frontend");
 

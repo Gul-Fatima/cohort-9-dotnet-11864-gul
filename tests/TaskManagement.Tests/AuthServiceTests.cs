@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using TaskManagement.Core.DTOs;
 using TaskManagement.Core.Exceptions;
 using TaskManagement.Services;
@@ -19,7 +20,7 @@ public class AuthServiceTests
         .Build();
 
     private static AuthService CreateService()
-        => new(TestDb.Create(), Config());
+        => new(TestDb.Create(), Config(), Microsoft.Extensions.Logging.Abstractions.NullLogger<AuthService>.Instance);
 
     [Fact]
     public async Task Register_ValidRequest_ReturnsTokenAndUserWithRoleUser()

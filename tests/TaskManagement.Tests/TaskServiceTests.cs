@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using TaskManagement.Core.DTOs;
 using TaskManagement.Core.Exceptions;
 using TaskManagement.Services;
@@ -7,7 +8,7 @@ namespace TaskManagement.Tests;
 
 public class TaskServiceTests
 {
-    private readonly TaskService _service = new(TestDb.Create());
+    private readonly TaskService _service = new(TestDb.Create(), Microsoft.Extensions.Logging.Abstractions.NullLogger<TaskService>.Instance);
 
     // --- role scoping ---------------------------------------------------------
 

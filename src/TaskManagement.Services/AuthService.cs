@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using TaskManagement.Core.DTOs;
 using TaskManagement.Core.Entities;
@@ -23,11 +24,13 @@ public class AuthService : IAuthService
 {
     private readonly AppDbContext _context;
     private readonly IConfiguration _config;
+    private readonly ILogger<AuthService> _logger;
 
-    public AuthService(AppDbContext context, IConfiguration config)
+    public AuthService(AppDbContext context, IConfiguration config, ILogger<AuthService> logger)
     {
         _context = context;
         _config = config;
+        _logger = logger;
     }
 
     // --- Register --------------------------------------------------------------
@@ -63,6 +66,7 @@ public class AuthService : IAuthService
         try
         {
             await _context.SaveChangesAsync();
+            _logger.LogInformation("User registered: {Email} (Id={UserId})", email, user.Id);
         }
         catch (DbUpdateException)
         {
@@ -89,9 +93,11 @@ public class AuthService : IAuthService
         // which one it was. BCrypt.Verify re-hashes the input and compares.
         if (user is null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
         {
+            _logger.LogWarning("Failed login attempt for {Email}", request.Email?.Trim().ToLowerInvariant());
             throw new ApiException(401, "Login failed", "Invalid email or password.");
         }
 
+        _logger.LogInformation("User logged in: {Email} (Id={UserId})", user.Email, user.Id);
         return new AuthResponse { Token = GenerateToken(user), User = ToResponse(user) };
     }
 

@@ -1,5 +1,6 @@
 using System.Globalization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using TaskManagement.Core.DTOs;
 using TaskManagement.Core.Entities;
 using TaskManagement.Core.Enums;
@@ -22,10 +23,12 @@ public interface ITaskService
 public class TaskService : ITaskService
 {
     private readonly AppDbContext _context;
+    private readonly ILogger<TaskService> _logger;
 
-    public TaskService(AppDbContext context)
+    public TaskService(AppDbContext context, ILogger<TaskService> logger)
     {
         _context = context;
+        _logger = logger;
     }
 
     // --- List (with filters + role scoping) ------------------------------------
@@ -161,6 +164,7 @@ public class TaskService : ITaskService
 
         _context.Tasks.Add(task);
         await _context.SaveChangesAsync();
+        _logger.LogInformation("Task created: {TaskId} '{Title}' by User {CreatorId}", task.Id, task.Title, creatorId);
 
         return await GetTaskAsync(task.Id, creatorId, isAdmin: true);
     }
@@ -225,6 +229,7 @@ public class TaskService : ITaskService
 
         task.UpdatedAt = DateTime.UtcNow;
         await _context.SaveChangesAsync();
+        _logger.LogInformation("Task updated: {TaskId} '{Title}' by User {ViewerId}", task.Id, task.Title, viewerId);
 
         return ToResponse(task);
     }
@@ -246,6 +251,7 @@ public class TaskService : ITaskService
 
         _context.Tasks.Remove(task);
         await _context.SaveChangesAsync();
+        _logger.LogInformation("Task deleted: {TaskId} '{Title}' by User {ViewerId}", task.Id, task.Title, viewerId);
     }
 
     // --- Dashboard stats --------------------------------------------------------------
